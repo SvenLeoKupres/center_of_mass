@@ -1,6 +1,6 @@
 import numpy as np
 
-from ship_floor_plan.dataset import RPlanDataset
+from dataset import RPlanDataset
 
 
 def balance_index(arr):

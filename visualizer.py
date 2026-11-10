@@ -2,9 +2,9 @@ import tkinter as tk
 from enum import Enum
 from queue import PriorityQueue
 
-from ship_floor_plan.center_of_mass import RPlanCenterOfMass, CenterMassCalculator
-from ship_floor_plan.colision_detection import check_within_bounds
-from ship_floor_plan.dataset import RPlanDataset, Dataset
+from center_of_mass import RPlanCenterOfMass, CenterMassCalculator
+from colision_detection import check_within_bounds
+from dataset import RPlanDataset, Dataset
 
 
 class RoomCategory (Enum):
@@ -80,6 +80,8 @@ class Window(tk.Tk):
         # x1, y1 = boundaries[0][0], boundaries[0][1]
         # self.canvas.create_line(x0, y0, x1, y1, width=3)
         # self.canvas.create_rectangle(x_top, y_top, x_bottom, y_bottom)
+        geometric_x = (x_top+x_bottom)/2
+        geometric_y = (y_top+y_bottom)/2
 
         priority_queue = PriorityQueue()
         for k in range(len(self.data["rooms"])):
@@ -104,6 +106,9 @@ class Window(tk.Tk):
             self.canvas.create_line(p1[0], p1[1], p2[0], p2[1], width=2)
 
         self.canvas.create_oval(calculator.x, calculator.y, calculator.x, calculator.y)
+        self.canvas.create_oval(geometric_x, geometric_y, geometric_x, geometric_y, fill="orange", outline="orange")
+        distance = ((geometric_x-calculator.x)**2+(geometric_y-calculator.y)**2)**0.5
+        print("Euclidean distance between center of mass and bounding box center:", distance)
 
         self.canvas.pack()
 
@@ -111,7 +116,7 @@ if __name__=="__main__":
     path = "./rplan/dataset_json/data_test.json"
     dataset = RPlanDataset(path)
 
-    index = 55
+    index = 46
 
     calculator = RPlanCenterOfMass(dataset.data[index])
     window = Window(dataset, calculator, index)
